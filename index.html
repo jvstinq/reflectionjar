@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reflection Jar</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Reflection Jar</h1>
+    <div id="streak">🔥 Streak: <span id="streak-count">0</span></div>
+  </header>
+
+  <main>
+    <div class="jar-container">
+      <div id="jar">
+        <!-- Tokens will appear here -->
+      </div>
+    </div>
+
+    <button id="write-btn">Write Reflection</button>
+
+    <section id="reflection-input" class="hidden">
+      <textarea id="reflection-text" placeholder="Write your snapshot here..."></textarea>
+      <button id="submit-reflection">Submit</button>
+    </section>
+  </main>
+
+  <footer>
+    <button id="view-summary">View Summary</button>
+    <button id="clear-data">Clear Data</button>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
