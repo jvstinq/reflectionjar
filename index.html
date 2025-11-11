@@ -13,7 +13,7 @@
     <h1>Reflection Jar</h1>
     <button id="writeBtn">🖊️ Write Entry</button>
 
-    <div id="jar-container">
+    <div id="jar-container" style ="position: relative;">
         <svg id="jar-svg" viewBox="0 0 200 300">
             <path id="jar-shape"
             d="M 84 30 Q 72 30 72 50 L 72 254 Q 72 279 158.4 281 Q 246 280 246 255 L 246 49 Q 246 30 235.2 30 Q 235.2 19 235.2 19 Q 110.4 19 84 19 Z"
@@ -21,6 +21,9 @@
             stroke="rgba(255, 255, 255, 0.5)"
             stroke-width="4"/>
         </svg>
+
+        <!-- Canvas for Matter.js tokens -->
+        <canvas id="jar-canvas" width="400" height="450" style="position:absolute; top:0; left:0; pointer-events:none;"></canvas>
     </div>
 
     <div class="button-row">
@@ -42,6 +45,7 @@
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
