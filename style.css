@@ -1,72 +1,132 @@
 body {
-  font-family: "Poppins", sans-serif;
-  background: linear-gradient(to bottom right, #b7d8f0, #e3f2fd);
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to bottom right, #a0c4ff, #bde0fe);
+  height: 100vh;
+  overflow: hidden;
+}
+
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
-  margin: 0;
-  color: #2c3e50;
+  justify-content: flex-start; /* move UI up again */
+  height: 100%;
+  padding-top: 60px; /* slightly from top */
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  width: 90%;
-  max-width: 600px;
-  margin-top: 1rem;
+h1 {
+  text-align: center;
+  color: #023047;
+  margin-bottom: 1rem;
 }
 
-#jar {
-  width: 200px;
-  height: 300px;
-  background: rgba(255, 255, 255, 0.6);
-  border: 3px solid #90caf9;
-  border-radius: 100px 100px 30px 30px;
-  display: flex;
-  flex-direction: column-reverse;
-  align-items: center;
-  overflow: hidden;
-  position: relative;
-}
-
-.token {
-  width: 20px;
-  height: 20px;
-  background: #64b5f6;
-  border-radius: 50%;
-  margin: 3px 0;
-  animation: drop 0.5s ease-in;
-}
-
-@keyframes drop {
-  0% { transform: translateY(-50px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
-}
-
+/* lighter, more cheerful button colors */
 button {
-  background-color: #64b5f6;
-  color: white;
+  background-color: #516ea0;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
-  padding: 10px 20px;
-  margin: 10px;
+  padding: 10px 15px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s, background-color 0.2s;
 }
 
 button:hover {
+  background-color: #7199dd;
+  color: white;
   transform: scale(1.05);
 }
 
-#reflection-input {
+#writeBtn {
+  margin-bottom: 20px;
+}
+
+/* restore lighter jar color */
+.jar {
+  width: 220px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 3px solid #3d4a64;
+  border-radius: 100px 100px 40px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.tokens {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.streak-counter {
+  position: absolute;
+  top: 120px;
+  right: 250px; /* move left toward the jar */
+  background: rgba(255, 255, 255, 0.5);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-weight: bold;
+  color: #023047;
+}
+
+/* Popup styling */
+.popup {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  width: 320px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 90%;
-  max-width: 500px;
+  position: relative;
 }
 
-.hidden {
-  display: none;
+textarea {
+  width: 90%;
+  height: 120px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  resize: none;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
+}
+
+/* Close button (X) */
+.close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.close:hover {
+  color: #000;
 }

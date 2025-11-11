@@ -7,30 +7,33 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>Reflection Jar</h1>
-    <div id="streak">🔥 Streak: <span id="streak-count">0</span></div>
-  </header>
+  <div class="streak-counter">🔥 Streak: 5 days</div>
 
-  <main>
-    <div class="jar-container">
-      <div id="jar">
-        <!-- Tokens will appear here -->
-      </div>
+  <div class="container">
+    <h1>Reflection Jar</h1>
+    <button id="writeBtn">🖊️ Write Entry</button>
+
+    <div class="jar">
+      <div class="tokens"></div>
     </div>
 
-    <button id="write-btn">Write Reflection</button>
+    <div class="button-row">
+      <button id="shopBtn">🛍️ Shop</button>
+      <button id="summaryBtn">📊 View Summary</button>
+    </div>
+  </div>
 
-    <section id="reflection-input" class="hidden">
-      <textarea id="reflection-text" placeholder="Write your snapshot here..."></textarea>
-      <button id="submit-reflection">Submit</button>
-    </section>
-  </main>
-
-  <footer>
-    <button id="view-summary">View Summary</button>
-    <button id="clear-data">Clear Data</button>
-  </footer>
+  <div id="popup" class="popup">
+    <div class="popup-content">
+      <span id="closePopup" class="close">&times;</span>
+      <h2>New Entry</h2>
+      <textarea id="reflectionText" placeholder="Write here..."></textarea>
+      <div class="popup-buttons">
+        <button id="promptBtn">Request Prompt</button>
+        <button id="submitBtn">Submit</button>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
