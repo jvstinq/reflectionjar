@@ -43,15 +43,25 @@ button:hover {
   margin-bottom: 20px;
 }
 
-/* restore lighter jar color */
-.jar {
-  width: 220px;
-  height: 300px;
-  background: rgba(255, 255, 255, 0.35);
-  border: 3px solid #3d4a64;
-  border-radius: 100px 100px 40px 40px;
+#jar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: relative;
-  overflow: hidden;
+  height: 400px;
+  width: 450px;
+  margin: 0 auto;
+}
+
+#jar-svg {
+  width: 110%;
+  height: 110%;
+  transform: translateX(-87px);
+  filter: drop-shadow(0 0 10px rgba(0,0,0,0.2));
+}
+
+#jar-shape {
+  backdrop-filter: blur(4px);
 }
 
 .tokens {
