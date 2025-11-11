@@ -2,5 +2,14 @@
   "reflections": [
     { "text": "Sample reflection #1", "date": "2025-10-01" },
     { "text": "Sample reflection #2", "date": "2025-10-02" }
+  ],
+
+  "prompts": [
+    "What are you grateful for right now?",
+    "What's one thing you learned about yourself this week?",
+    "What made you smile today?",
+    "What challenged you the most this week?",
+    "Talk about a moment you felt proud recently.",
+    "What's something you're looking forward to?"
   ]
 }
