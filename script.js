@@ -7,6 +7,7 @@ document.getElementById("closePopup").addEventListener("click", () => {
   document.getElementById("popup").style.display = "none";
 });
 
+// --- PROMPTS ---
 let prompts = [];
 
 fetch("data.json")
@@ -133,11 +134,65 @@ function playDropSound() {
   audio.play();
 }
 
+// --- RECREATE TOKENS FROM STORAGE ---
+const savedReflections = JSON.parse(localStorage.getItem("reflections") || "[]");
+savedReflections.forEach(ref => {
+  createToken(ref.date, { prompt: "Free write", text: ref.text });
+});
+
+//---to reset (TESTING PURPOSE) ---
+localStorage.clear();
+
+// --- setting up streak and tokens---
+let streak = parseInt(localStorage.getItem("streak")) || 0;
+let lastDate = localStorage.getItem("lastDate") || null;
+let bonusTokens = parseInt(localStorage.getItem("bonusTokens")) || 0;
+let totalTokens = parseInt(localStorage.getItem("totalTokens")) || 0;
+
+//update streak
+function updateStreakDisplay() {
+  document.getElementById("streakText").textContent = `🔥 Streak: ${streak} day${streak !== 1 ? "s" : ""}`;
+  document.getElementById("bonusText").textContent = `Bonus Tokens: ${bonusTokens}`;
+}
+updateStreakDisplay();
+
+//update total tokens
+function updateTotalTokensDisplay() {
+  document.getElementById("totalTokens").textContent = totalTokens;
+}
+updateTotalTokensDisplay();
+
 // --- SUBMIT HANDLER ---
 document.getElementById("submitBtn").addEventListener("click", () => {
   const reflectionText = document.getElementById("reflectionText").value.trim();
   if (!reflectionText) return;
 
+  //streak logic
+  const today = new Date().toISOString().split("T")[0];
+  //testing purpose (changing the date manually)
+  //let today = "2025-11-10";
+
+  //check if last submission was yesterday (consecutive)
+  if (lastDate) {
+    const last = new Date(lastDate);
+    const todayDate = new Date(today);
+
+    const diffTime = todayDate - last;
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+    if (diffDays === 1) { //consecutive day, streak increase
+      streak++;
+    } else if (diffDays === 0) {//same day, do not increase streak
+      alert("You already submitted today!");
+      return;
+    } else {//missed a day, reset streak
+      streak = 1;
+    }
+  } else {
+    streak = 1; //first submission
+  }
+
+  // --- CREATE TOKEN
   const dateStr = new Date().toLocaleDateString("en-US", { month: "2-digit", day: "2-digit" });
   const reflectionData = { prompt: "Free write", text: reflectionText };
 
@@ -147,6 +202,23 @@ document.getElementById("submitBtn").addEventListener("click", () => {
   const reflections = JSON.parse(localStorage.getItem("reflections") || "[]");
   reflections.push({ date: dateStr, text: reflectionText });
   localStorage.setItem("reflections", JSON.stringify(reflections));
+
+  //calculate bonus tokens = 1 bonus token every 2 consecutive days
+  bonusTokens = Math.floor(streak / 2);
+
+  //calculate total token
+  const earnedTokens = 1 + bonusTokens;
+  totalTokens += earnedTokens;
+
+  //save to storage
+  localStorage.setItem("streak", streak);
+  localStorage.setItem("lastDate", today);
+  localStorage.setItem("bonusTokens", bonusTokens);
+  localStorage.setItem("totalTokens", totalTokens);
+
+  //update display
+  updateStreakDisplay();
+  updateTotalTokensDisplay();
 
   document.getElementById("reflectionText").value = "";
   document.getElementById("popup").style.display = "none";
