@@ -28,6 +28,44 @@ document.getElementById("promptBtn").addEventListener("click", () => {
   }
 });
 
+// ---Tutorial ---
+async function loadTutorial() {
+  const response = await fetch("data.json");
+  const data = await response.json();
+
+  const tutorial = data.tutorial;
+
+  // Fill title
+  document.getElementById("tutorialTitle").textContent = tutorial.title;
+
+  // Build sections dynamically
+  const body = document.getElementById("tutorialBody");
+  body.innerHTML = ""; // clear old content
+
+  tutorial.sections.forEach(section => {
+    const h3 = document.createElement("h3");
+    h3.textContent = section.heading;
+    body.appendChild(h3);
+
+    const ul = document.createElement("ul");
+    section.items.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      ul.appendChild(li);
+    });
+
+    body.appendChild(ul);
+  });
+}
+
+tutorialBtn.addEventListener("click", async () => {
+  await loadTutorial();
+  tutorialPopup.style.display = "flex";
+});
+closeTutorial.addEventListener("click", () => {
+  tutorialPopup.style.display = "none";
+});
+
 // --- MATTER.JS SETUP ---
 const { Engine, Render, World, Bodies, Events, Mouse, MouseConstraint, Query, Runner, Composite } = Matter;
 
@@ -141,7 +179,7 @@ savedReflections.forEach(ref => {
 });
 
 //---to reset (TESTING PURPOSE) ---
-localStorage.clear();
+//localStorage.clear();
 
 // --- setting up streak and tokens---
 let streak = parseInt(localStorage.getItem("streak")) || 0;
@@ -168,28 +206,31 @@ document.getElementById("submitBtn").addEventListener("click", () => {
   if (!reflectionText) return;
 
   //streak logic
-  const today = new Date().toISOString().split("T")[0];
+  //const today = new Date().toISOString().split("T")[0];
+
   //testing purpose (changing the date manually)
-  //let today = "2025-11-10";
+  let today = "2025-11-21";
 
-  //check if last submission was yesterday (consecutive)
-  if (lastDate) {
-    const last = new Date(lastDate);
-    const todayDate = new Date(today);
+  //Streak logic
+  const lastDate = localStorage.getItem("lastDate");
+  const last = lastDate ? lastDate : null;
 
-    const diffTime = todayDate - last;
+  if (!last) {//first entry ever
+    streak = 1;
+  } else if (last === today) {//streak unchanged
+    console.log("Multiple entries today — streak stays:", streak);
+  } else {//compute difference between the dates
+    const lastD = new Date(last);
+    const todayD = new Date(today);
+
+    const diffTime = todayD - lastD;
     const diffDays = diffTime / (1000 * 60 * 60 * 24);
 
-    if (diffDays === 1) { //consecutive day, streak increase
+    if (diffDays === 1) {//next day: streak increases
       streak++;
-    } else if (diffDays === 0) {//same day, do not increase streak
-      alert("You already submitted today!");
-      return;
-    } else {//missed a day, reset streak
+    } else if (diffDays > 1) {//missed days: reset streak
       streak = 1;
     }
-  } else {
-    streak = 1; //first submission
   }
 
   // --- CREATE TOKEN
@@ -198,17 +239,20 @@ document.getElementById("submitBtn").addEventListener("click", () => {
 
   createToken(dateStr, reflectionData);
 
+  //token logic
+  if (last !== today) {
+    // First submission of the day earns tokens
+    bonusTokens = Math.floor(streak / 2);
+    earnedTokens = 1 + bonusTokens;
+    totalTokens += earnedTokens;
+  } else {
+    console.log("Multiple entries today — no extra tokens awarded.");
+  }
+
   // Save reflection to localStorage
   const reflections = JSON.parse(localStorage.getItem("reflections") || "[]");
   reflections.push({ date: dateStr, text: reflectionText });
   localStorage.setItem("reflections", JSON.stringify(reflections));
-
-  //calculate bonus tokens = 1 bonus token every 2 consecutive days
-  bonusTokens = Math.floor(streak / 2);
-
-  //calculate total token
-  const earnedTokens = 1 + bonusTokens;
-  totalTokens += earnedTokens;
 
   //save to storage
   localStorage.setItem("streak", streak);

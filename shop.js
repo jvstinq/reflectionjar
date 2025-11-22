@@ -25,10 +25,11 @@ function setInventory(inv) {
 }
 
 function getTokens() {
-  const reflections = getReflectionCount();
-  const purchases = getInventory().length;
-  const tokens = reflections - purchases;
-  return tokens > 0 ? tokens : 0;
+  return parseInt(localStorage.getItem("totalTokens") || "0");
+}
+
+function setTokens(amount) {
+  localStorage.setItem("totalTokens", amount);
 }
 
 function updateTokenDisplay() {
@@ -71,13 +72,17 @@ document.querySelectorAll(".buy-btn").forEach(btn => {
       return;
     }
 
+    //deduct tokens
+    setTokens(available - cost);
+
+    //add item to inventory
     const inv = getInventory();
     if (!inv.includes(name)) {
       inv.push(name);
       setInventory(inv);
     }
 
-    // Update UI after purchase
+    //refresh UI
     updateTokenDisplay();
     markOwnedItems();
   });

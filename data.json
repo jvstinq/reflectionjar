@@ -11,5 +11,51 @@
     "What challenged you the most this week?",
     "Talk about a moment you felt proud recently.",
     "What's something you're looking forward to?"
-  ]
+  ],
+
+  "tutorial": {
+    "title": "Reflection Jar Tutorial",
+    "sections": [
+      {
+        "heading": "🌱 Daily Reflections",
+        "items": [
+          "Write as many reflections as you want each day.",
+          "Only the first submission counts toward streak and tokens.",
+          "Option for free-write or guided prompt"
+        ]
+      },
+      {
+        "heading": "🔥 Streak Rules",
+        "items": [
+          "Streak increases once per day.",
+          "Bonus tokens given every 2 streak days.",
+          "Missing a day resets the streak."
+        ]
+      },
+      {
+        "heading": "🪙 Tokens",
+        "items": [
+          "Earn tokens on your first reflection of the day.",
+          "Tokens are used to buy cosmetic in shop."
+        ]
+      },
+      {
+        "heading": "🛒 Shop",
+        "items": [
+          "Spend your tokens to unlock items.",
+          "Owned items stay unlocked forever.",
+          "Items show as 'OWNED' after purchase."
+        ]
+      },
+      {
+        "heading": "📝 Summary Function",
+        "items": [
+          "Automatically creates a short summary of your reflections.",
+          "Highlights repeated themes, emotions, and ideas.",
+          "Helps you track growth and patterns over time.",
+          "Summaries update each time you submit a new reflection."
+        ]
+      }
+    ]
+  }
 }
