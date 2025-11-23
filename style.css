@@ -158,6 +158,19 @@ textarea {
   text-align: center;
 }
 
+.clear-prompt-btn {
+  background: #7199dd;
+  border: 1px solid #d1d5db;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #ffffff;
+  cursor: pointer;
+}
+.clear-prompt-btn:hover {
+  background: rgba(0,0,0,0.04);
+}
+
 /* Close button (X) */
 .close {
   position: absolute;
