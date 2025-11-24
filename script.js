@@ -216,8 +216,7 @@ function updateTotalTokensDisplay() {
 updateStreakDisplay();
 updateTotalTokensDisplay();
 
-// --- Rebuild the jar to match the canonical state ---
-// New robust logic:
+// --- Rebuild the jar to match the canonical state --
 //  - Always render ALL silver reflections from storage as silver tokens
 //  - Render exactly `totalTokens` gold tokens (independent of reflections)
 //  - Place history tokens near bottom, silent, gentle nudge
@@ -248,6 +247,98 @@ function rebuildTokensFromStorage() {
   // One engine update to let tokens settle a little
   Engine.update(engine, 50);
 }
+
+// ===== SUMMARY POPUP LOGIC =====
+
+const summaryBtn = $("summaryBtn");
+const summaryPopup = $("summaryPopup");
+const summaryList = $("summaryList");
+const summaryDetails = $("summaryDetailsInner");
+const summaryEmpty = $("summaryEmptyMessage");
+
+const summaryDate = $("summaryDate");
+const summaryPrompt = $("summaryPrompt");
+const summaryText = $("summaryText");
+
+if (summaryBtn) {
+  summaryBtn.addEventListener("click", () => {
+    populateSummaryList();
+    summaryPopup.style.display = "flex";
+  });
+}
+
+if ($("closeSummaryPopup")) {
+  $("closeSummaryPopup").addEventListener("click", () => {
+    summaryPopup.style.display = "none";
+  });
+}
+
+// Build the left column listing reflections
+function populateSummaryList() {
+  summaryList.innerHTML = "";
+  summaryDetails.style.display = "none";
+  summaryEmpty.style.display = "block";
+
+  const reflections = JSON.parse(localStorage.getItem("reflections") || "[]");
+
+  if (reflections.length === 0) {
+    summaryList.innerHTML = `<p style="text-align:center;color:#777;">No reflections yet.</p>`;
+    return;
+  }
+
+  reflections
+    .sort((a,b) => new Date(b.dateISO) - new Date(a.dateISO))
+    .forEach(ref => {
+
+      // fallback date logic
+      const display =
+        ref.displayDate ||
+        ref.dateISO ||
+        ref.date ||
+        "Unknown";
+
+      // Choose preview: prompt > text
+      let preview = "";
+      if (ref.prompt && ref.prompt.trim() !== "") preview = ref.prompt;
+      else preview = ref.text || "";
+
+      const item = document.createElement("div");
+      item.className = "summary-list-item";
+
+      item.innerHTML = `
+        <div class="summary-list-item-date">${display}</div>
+        <div class="summary-list-item-preview">${preview}</div>
+      `;
+
+      item.addEventListener("click", () => {
+        document.querySelectorAll(".summary-list-item").forEach(el => el.classList.remove("active"));
+        item.classList.add("active");
+        showReflectionDetails(ref);
+      });
+
+      summaryList.appendChild(item);
+    });
+}
+
+function showReflectionDetails(ref) {
+  summaryEmpty.style.display = "none";
+  summaryDetails.style.display = "block";
+
+  summaryDate.textContent = ref.displayDate || ref.dateISO;
+  summaryPrompt.textContent = ref.prompt ? `Prompt: ${ref.prompt}` : "";
+  summaryText.textContent = ref.text;
+}
+
+$("closeSummaryPopup").addEventListener("click", () => {
+  summaryPopup.style.display = "none";
+});
+
+summaryPopup.addEventListener("click", (e) => {
+  if (e.target === summaryPopup) {
+    summaryPopup.style.display = "none";
+  }
+});
+
 
 // --- DOM ready: ensure defaults and rebuild jar ---
 window.addEventListener("DOMContentLoaded", () => {
@@ -337,6 +428,8 @@ if ($("submitBtn")) {
     if ($("popup")) $("popup").style.display = "none";
   });
 }
+
+
 
 // --- Shop button wiring ---
 if ($("shopBtn")) {

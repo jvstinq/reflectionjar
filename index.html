@@ -64,6 +64,43 @@
     </div>
   </div>
 
+  <div id="summaryPopup" class="popup-overlay">
+    <div class="popup-window summary-window">
+
+      <!-- Header -->
+      <h2 class="popup-title">Your Reflections</h2>
+
+      <!-- Generate summary button -->
+      <button class="summary-btn generate-btn" id="generateSummaryBtn">
+        Generate Summary (Coming Soon)
+      </button>
+      
+      <div class="summary-content">
+
+        <!-- Left column: list -->
+        <div class="summary-list" id="summaryList"></div>
+
+        <!-- Right column: reflection details -->
+        <div class="summary-details" id="summaryDetails">
+
+          <div class="summary-details-empty" id="summaryEmptyMessage">
+            Select a reflection from the list to view its details.
+          </div>
+
+          <div class="summary-details-inner" id="summaryDetailsInner" style="display:none;">
+            <h3 id="summaryDate"></h3>
+            <p id="summaryPrompt" class="summary-prompt"></p>
+            <p id="summaryText" class="summary-text"></p>
+          </div>
+
+        </div>
+      </div>
+
+      <button class="close-btn" id="closeSummaryPopup">×</button>
+
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
   <script src="script.js"></script>
 </body>
