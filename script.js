@@ -215,9 +215,24 @@ let totalTokens = parseInt(localStorage.getItem(TOTAL_TOKENS_KEY), 10) || 0;
 
 // UI updates
 function updateStreakDisplay() {
-  if ($("streakText")) $("streakText").textContent = `🔥 Streak: ${streak} day${streak !== 1 ? "s" : ""}`;
-  if ($("bonusText")) $("bonusText").textContent = `Bonus Tokens: ${bonusTokens}`;
+  if ($("streakText"))
+    $("streakText").textContent = `🔥 Streak: ${streak} day${streak !== 1 ? "s" : ""}`;
+
+  if ($("bonusText"))
+    $("bonusText").textContent = `Bonus Tokens: ${bonusTokens}`;
+
+  // Fire emoji streak bar
+  const fireContainer = $("streakFires");
+  if (fireContainer) {
+    if (streak <= 0) {
+      fireContainer.textContent = "";
+    } else {
+      const fires = "🔥".repeat(streak);
+      fireContainer.textContent = `${fires} (${streak})`;
+    }
+  }
 }
+
 function updateTotalTokensDisplay() {
   if ($("totalTokens")) $("totalTokens").textContent = totalTokens;
   if ($("tokenDisplay")) $("tokenDisplay").textContent = `Tokens: ${totalTokens}`;
@@ -377,7 +392,30 @@ function applyTheme(themeName) {
       accent: "#f6f2ff",
       gradientStart: "#e5d8ff",
       gradientEnd:   "#f0e6ff"
+    },
+
+    red: {
+      primary: "#ff6b6b",
+      hover: "#ff8787",
+      accent: "#fff1f1",
+      gradientStart: "#ffb3b3",
+      gradientEnd: "#ffd6d6"
+    },
+    orange: {
+      primary: "#ff9f43",
+      hover: "#ffb56b",
+      accent: "#fff3e6",
+      gradientStart: "#ffd7b3",
+      gradientEnd: "#ffe8cc"
+    },
+    teal: {
+      primary: "#2bbbad",
+      hover: "#5adfcc",
+      accent: "#e6f9f7",
+      gradientStart: "#b3f0e9",
+      gradientEnd: "#d6faf5"
     }
+
   };
 
   const t = themes[themeName];

@@ -34,14 +34,81 @@ function updateTokenDisplay() {
 }
 
 /* ----------------------------------------
+   Theme application (copied from script.js)
+---------------------------------------- */
+
+function applyTheme(themeName) {
+  const themes = {
+    blue: {
+      primary: "#516ea0",
+      hover: "#7199dd",
+      accent: "#f5f7ff",
+      gradientStart: "#a0c4ff",
+      gradientEnd:   "#bde0fe"
+    },
+    pink: {
+      primary: "#ffb7d2",
+      hover: "#ff9fc4",
+      accent: "#fff0f5",
+      gradientStart: "#ffd1e8",
+      gradientEnd:   "#ffe4f2"
+    },
+    green: {
+      primary: "#77d098ff",
+      hover: "#a4dabb",
+      accent: "#f2fbf5",
+      gradientStart: "#c5f5d6",
+      gradientEnd:   "#d7ffe8"
+    },
+    purple: {
+      primary: "#d6c8ff",
+      hover: "#c4b2ff",
+      accent: "#f6f2ff",
+      gradientStart: "#e5d8ff",
+      gradientEnd:   "#f0e6ff"
+    },
+    red: {
+      primary: "#ff6b6b",
+      hover: "#ff8787",
+      accent: "#fff1f1",
+      gradientStart: "#ffb3b3",
+      gradientEnd: "#ffd6d6"
+    },
+    orange: {
+      primary: "#ff9f43",
+      hover: "#ffb56b",
+      accent: "#fff3e6",
+      gradientStart: "#ffd7b3",
+      gradientEnd: "#ffe8cc"
+    },
+    teal: {
+      primary: "#2bbbad",
+      hover: "#5adfcc",
+      accent: "#e6f9f7",
+      gradientStart: "#b3f0e9",
+      gradientEnd: "#d6faf5"
+    }
+  };
+
+  const t = themes[themeName];
+  if (!t) return;
+
+  document.documentElement.style.setProperty("--primary-color", t.primary);
+  document.documentElement.style.setProperty("--primary-hover", t.hover);
+  document.documentElement.style.setProperty("--bg-accent", t.accent);
+
+  document.documentElement.style.setProperty("--gradient-start", t.gradientStart);
+  document.documentElement.style.setProperty("--gradient-end", t.gradientEnd);
+
+  localStorage.setItem("rj_active_theme", themeName);
+}
+
+/* ----------------------------------------
    Apply theme on shop load
 ---------------------------------------- */
 function loadActiveTheme() {
   const theme = localStorage.getItem("rj_active_theme") || "blue";
-
-  if (typeof applyTheme === "function") {
-    applyTheme(theme);
-  }
+  applyTheme(theme);
 }
 
 /* ----------------------------------------
@@ -108,11 +175,11 @@ function attachButtonHandlers() {
       if (equipBtn.disabled) return;
       if (!theme) return;
 
+      // Save active theme for all pages
       localStorage.setItem("rj_active_theme", theme);
 
-      if (typeof applyTheme === "function") {
-        applyTheme(theme);
-      }
+      // Immediately apply to the shop page
+      applyTheme(theme);
 
       alert(`Theme set to ${theme}!`);
     });

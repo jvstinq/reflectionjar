@@ -124,6 +124,14 @@ button:hover {
   right: 250px;
 }
 
+/* Fire emoji bar under streak */
+.streak-fires {
+  margin-top: 6px;
+  font-size: 20px;
+  text-align: center;
+  user-select: none;
+}
+
 /* ================================================
    POPUP WINDOWS (WRITE ENTRY + TUTORIAL)
    ================================================ */
