@@ -45,7 +45,7 @@
   <div id="popup" class="popup">
     <div class="popup-content">
       <span id="closePopup" class="close">&times;</span>
-      <h2>New Entry</h2>
+      <h2 id="popupTitle" class="popup-main-title">New Entry: Free Write</h2>
       <p id="promptText" class="prompt-text"></p>
       <button id="clearPromptBtn" class="clear-prompt-btn" style="display:none; margin-bottom:8px;">Clear Prompt</button>
 
@@ -70,13 +70,19 @@
   <div id="summaryPopup" class="popup-overlay">
     <div class="popup-window summary-window">
 
-      <!-- Header -->
+            <!-- Header -->
       <h2 class="popup-title">Your Reflections</h2>
 
-      <!-- Generate summary button -->
-      <button class="summary-btn generate-btn" id="generateSummaryBtn">
-        Generate Summary
-      </button>
+      <!-- Actions row -->
+      <div class="summary-actions">
+        <button class="summary-btn generate-btn" id="generateSummaryBtn">
+          Generate Summary
+        </button>
+        <button class="summary-btn delete-btn" id="deleteEntryBtn" disabled>
+          Delete Entry
+        </button>
+      </div>
+
       
       <div class="summary-content">
 

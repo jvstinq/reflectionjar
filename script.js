@@ -11,7 +11,7 @@ const {
 
 function $(id) { return document.getElementById(id); }
 
-// --- Audio helper ---
+// --- Audio helpers ---
 function playDropSound() {
   try {
     const audio = new Audio("assets/drop.mp3");
@@ -20,6 +20,24 @@ function playDropSound() {
   } catch (e) {
     // If asset missing or audio fails, ignore to avoid noisy console errors.
   }
+}
+
+// play when a reflection in the list is clicked
+function playReflectionSound() {
+  try {
+    const audio = new Audio("assets/reflectionSound.mp3");
+    audio.volume = 0.7;
+    audio.play().catch(() => {});
+  } catch (e) {}
+}
+
+// play when Generate Summary is clicked
+function playGenerateSummarySound() {
+  try {
+    const audio = new Audio("generateSummary.mp3");
+    audio.volume = 0.7;
+    audio.play().catch(() => {});
+  } catch (e) {}
 }
 
 // Apply theme
@@ -31,8 +49,14 @@ let prompts = [];
 let currentPrompt = null;
 
 if ($("writeBtn")) {
-  $("writeBtn").addEventListener("click", () => { $("popup").style.display = "flex"; });
+  $("writeBtn").addEventListener("click", () => {
+    if ($("popupTitle")) {
+      $("popupTitle").textContent = "New Entry: Free Write";
+    }
+    $("popup").style.display = "flex";
+  });
 }
+
 if ($("closePopup")) {
   $("closePopup").addEventListener("click", () => { $("popup").style.display = "none"; });
 }
@@ -55,6 +79,12 @@ if ($("promptBtn")) {
     if (prompts.length > 0) {
       currentPrompt = prompts[Math.floor(Math.random() * prompts.length)];
       $("promptText").textContent = currentPrompt;
+
+      // Change header when using a prompt
+      if ($("popupTitle")) {
+        $("popupTitle").textContent = "New Entry: Requested Prompt";
+      }
+
       if ($("clearPromptBtn")) $("clearPromptBtn").style.display = "inline-block";
     } else {
       $("promptText").textContent = "Loading prompts... please try again.";
@@ -62,13 +92,20 @@ if ($("promptBtn")) {
     }
   });
 }
+
 if ($("clearPromptBtn")) {
   $("clearPromptBtn").addEventListener("click", () => {
     currentPrompt = null;
     $("promptText").textContent = "";
     $("clearPromptBtn").style.display = "none";
+
+    // Back to free-write mode
+    if ($("popupTitle")) {
+      $("popupTitle").textContent = "New Entry: Free Write";
+    }
   });
 }
+
 
 // Tutorial wiring (if present in DOM)
 async function loadTutorial() {
@@ -238,7 +275,7 @@ function updateStreakDisplay() {
   }
 }
 
-// NEW: Gold Tokens, Bonus Tokens, Total Tokens (Silver+Gold)
+// Gold Tokens, "Bonus" display (silver count), Total Tokens (Silver+Gold)
 function updateTotalTokensDisplay() {
   const goldTokens = totalTokens;
 
@@ -255,7 +292,7 @@ function updateTotalTokensDisplay() {
 
   // Main display on index.html
   if ($("goldTokens")) $("goldTokens").textContent = goldTokens;
-  // 👇 Bonus Tokens now ALWAYS matches silver tokens in the jar
+  // Bonus Tokens display matches silver tokens in the jar
   if ($("bonusTokensDisplay")) $("bonusTokensDisplay").textContent = silverCount;
   if ($("totalTokens")) $("totalTokens").textContent = totalAllTokens;
 
@@ -303,6 +340,16 @@ function rebuildTokensFromStorage() {
 
 // ===== SUMMARY POPUP LOGIC =====
 
+// Key for a reflection (works even if older entries don't have id yet)
+function getReflectionKey(ref) {
+  if (ref.id) return ref.id;
+  const iso = ref.dateISO || ref.date || "";
+  const textSnippet = (ref.text || "").slice(0, 50);
+  return iso + "|" + textSnippet;
+}
+
+let selectedReflectionKey = null;
+
 const summaryBtn = $("summaryBtn");
 const summaryPopup = $("summaryPopup");
 const summaryList = $("summaryList");
@@ -312,6 +359,7 @@ const summaryEmpty = $("summaryEmptyMessage");
 const summaryDate = $("summaryDate");
 const summaryPrompt = $("summaryPrompt");
 const summaryText = $("summaryText");
+const deleteEntryBtn = $("deleteEntryBtn");
 
 if (summaryBtn) {
   summaryBtn.addEventListener("click", () => {
@@ -326,13 +374,22 @@ if ($("closeSummaryPopup")) {
   });
 }
 
+summaryPopup.addEventListener("click", (e) => {
+  if (e.target === summaryPopup) {
+    summaryPopup.style.display = "none";
+  }
+});
+
 // Build the left column listing reflections
 function populateSummaryList() {
   summaryList.innerHTML = "";
   summaryDetails.style.display = "none";
   summaryEmpty.style.display = "block";
 
-  const reflections = JSON.parse(localStorage.getItem("reflections") || "[]");
+  selectedReflectionKey = null;
+  if (deleteEntryBtn) deleteEntryBtn.disabled = true;
+
+  const reflections = JSON.parse(localStorage.getItem(REFLECTIONS_KEY) || "[]" );
 
   if (reflections.length === 0) {
     summaryList.innerHTML = `<p style="text-align:center;color:#777;">No reflections yet.</p>`;
@@ -362,9 +419,23 @@ function populateSummaryList() {
       `;
 
       item.addEventListener("click", () => {
-        document.querySelectorAll(".summary-list-item").forEach(el => el.classList.remove("active"));
+        // highlight selection
+        document.querySelectorAll(".summary-list-item").forEach(el =>
+          el.classList.remove("active")
+        );
         item.classList.add("active");
+
+        // track selected reflection
+        selectedReflectionKey = getReflectionKey(ref);
+
+        // enable delete
+        if (deleteEntryBtn) deleteEntryBtn.disabled = false;
+
+        // show details
         showReflectionDetails(ref);
+
+        // play click sound
+        playReflectionSound();
       });
 
       summaryList.appendChild(item);
@@ -380,15 +451,30 @@ function showReflectionDetails(ref) {
   summaryText.textContent = ref.text;
 }
 
-$("closeSummaryPopup").addEventListener("click", () => {
-  summaryPopup.style.display = "none";
-});
+// Delete button handler
+if (deleteEntryBtn) {
+  deleteEntryBtn.addEventListener("click", () => {
+    if (!selectedReflectionKey) return;
 
-summaryPopup.addEventListener("click", (e) => {
-  if (e.target === summaryPopup) {
-    summaryPopup.style.display = "none";
-  }
-});
+    const confirmed = confirm("Delete this entry? This cannot be undone.");
+    if (!confirmed) return;
+
+    const all = JSON.parse(localStorage.getItem(REFLECTIONS_KEY) || "[]");
+    const remaining = all.filter(r => getReflectionKey(r) !== selectedReflectionKey);
+
+    // Save back to storage
+    localStorage.setItem(REFLECTIONS_KEY, JSON.stringify(remaining));
+
+    // Rebuild jar / counters (silver tokens depend on reflections)
+    rebuildTokensFromStorage();
+    updateTotalTokensDisplay();
+
+    // Reset selection + button, and rebuild list
+    selectedReflectionKey = null;
+    deleteEntryBtn.disabled = true;
+    populateSummaryList();
+  });
+}
 
 function applyTheme(themeName) {
   const themes = {
@@ -507,7 +593,7 @@ if ($("submitBtn")) {
       totalTokens += earnedTokens;   // gold tokens
       tokenColor = "gold";
     } else {
-      bonusTokens += 1;
+      bonusTokens += 1; // logical bonus tracking, but UI uses silver count
       tokenColor = "silver";
     }
 
@@ -604,6 +690,9 @@ if (generateSummaryBtn) {
       alert("You haven't made any reflections yet. Start writing to see your summary!");
       return;
     }
+
+    // play sound on click
+    playGenerateSummarySound();
 
     const originalText = generateSummaryBtn.textContent;
     generateSummaryBtn.disabled = true;
