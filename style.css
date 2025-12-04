@@ -173,6 +173,7 @@ textarea {
   resize: none;
   font-size: 1rem;       /* larger input text */
   line-height: 1.4;
+  box-sizing: border-box;
 }
 
 /* Make placeholder text match the bigger size */
@@ -298,7 +299,6 @@ textarea::placeholder {
   border: none;
   cursor: pointer;
   transition: background 0.2s;
-  margin-bottom: 15px;
 }
 .generate-btn:hover {
   background: var(--primary-hover);
