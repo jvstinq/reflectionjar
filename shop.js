@@ -13,6 +13,15 @@ const RJ_INVENTORY_KEY = "rj_inventory";
   }
 })();
 
+/* Make Blue theme owned by default */
+(function ensureDefaultTokenTheme() {
+  const inv = JSON.parse(localStorage.getItem(RJ_INVENTORY_KEY) || "[]");
+  if (!inv.includes("default")) {
+    inv.push("default");
+    localStorage.setItem(RJ_INVENTORY_KEY, JSON.stringify(inv));
+  }
+})();
+
 /* ------------------------------
    Helpers
 ------------------------------ */
@@ -184,13 +193,18 @@ function attachButtonHandlers() {
       if (equipBtn.disabled) return;
       if (!theme) return;
 
-      // Save active theme for all pages
-      localStorage.setItem("rj_active_theme", theme);
+      const colorThemes = ["blue","pink","green","purple","orange","teal"];
 
-      // Immediately apply to the shop page
-      applyTheme(theme);
-
-      alert(`Theme set to ${theme}!`);
+      if (colorThemes.includes(theme)) {
+        // Normal color theme
+        localStorage.setItem("rj_active_theme", theme);
+        applyTheme(theme);
+        alert(`Theme set to ${theme}!`);
+      } else {
+        // Token themes
+        localStorage.setItem("rj_token_theme", theme);
+        alert(`Token style set to ${theme}!`);
+      }
     });
   });
 }

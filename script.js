@@ -12,14 +12,17 @@ const {
 function $(id) { return document.getElementById(id); }
 
 // --- Audio helpers ---
-function playDropSound() {
+function playDropSound(type) {
+  let file = "assets/drop.mp3";
+
+  if (type === "superball") file = "assets/superball.mp3";
+  else if (type === "plush") file = "assets/plush.mp3";
+
   try {
-    const audio = new Audio("assets/drop.mp3");
-    audio.volume = 0.6;
-    audio.play().catch(() => { /* browser autoplay restrictions - ignore */ });
-  } catch (e) {
-    // If asset missing or audio fails, ignore to avoid noisy console errors.
-  }
+    const audio = new Audio(file);
+    audio.volume = 0.7;
+    audio.play();
+  } catch (e) {}
 }
 
 // play when a reflection in the list is clicked
@@ -42,6 +45,7 @@ function playGenerateSummarySound() {
 
 // Apply theme
 const activeTheme = localStorage.getItem("rj_active_theme") || "blue";
+const tokenTheme = localStorage.getItem("rj_token_theme") || "default";
 applyTheme(activeTheme);
 
 // --- Prompt UI & basic popup handling ---
@@ -206,13 +210,52 @@ function createTokenVisual(displayDate, reflectionData, colorType = "gold", isHi
 
   const radius = 18;
   const yPos = isHistory ? (300 + Math.random() * 40) : -40; // off-top for new tokens, bottom area for history
-  const props = {
+
+  let physicsProps = {
     restitution: isHistory ? 0.05 : 0.5,
     friction: 0.08,
     frictionAir: isHistory ? 0.08 : 0.02,
     density: 0.0018,
-    render: { fillStyle: colorMap[colorType] || colorMap.gold }
   };
+
+  let color = colorMap[colorType] || colorMap.gold;
+
+  /* ------------------------------------
+    SPECIAL TOKEN THEMES
+  ------------------------------------ */
+
+  if (tokenTheme === "superball") {
+    color = "#ff7acb";            // bright pink
+    physicsProps.restitution = 1.22; // bouncy
+    physicsProps.frictionAir = 0.05; // low drag
+    physicsProps.friction = 0.05;
+    physicsProps.density = 0.0008;
+  }
+
+  const plushRainbow = [
+    "#ffd1dc", // pastel pink
+    "#e0bbff", // light purple
+    "#c1e1c1", // mint green
+    "#ffecd2", // peach
+    "#f1e7fe"  // lavender
+  ];
+
+  if (tokenTheme === "plush") {
+    color = plushRainbow[Math.floor(Math.random() * plushRainbow.length)];
+
+    physicsProps.restitution = 0.1;  // low bounce
+    physicsProps.frictionAir = 0.2;  // slow fall
+    physicsProps.density = 0.0025;   // heavier “plush”
+  }
+  
+  const props = {
+    restitution: physicsProps.restitution,
+    friction: physicsProps.friction,
+    frictionAir: physicsProps.frictionAir,
+    density: physicsProps.density,
+    render: { fillStyle: color }
+  };
+
 
   const token = Bodies.circle(xPos, yPos, radius, props);
   token.label = displayDate;
@@ -225,7 +268,7 @@ function createTokenVisual(displayDate, reflectionData, colorType = "gold", isHi
     Body.setVelocity(token, { x: (Math.random() - 0.5) * 0.2, y: (Math.random() - 0.5) * 0.2 });
   } else {
     // New token: play sound and let it fall naturally
-    playDropSound();
+    playDropSound(tokenTheme || colorType);
   }
 
   return token;
@@ -435,7 +478,7 @@ function populateSummaryList() {
         showReflectionDetails(ref);
 
         // play click sound
-        playReflectionSound();
+        //playReflectionSound();
       });
 
       summaryList.appendChild(item);
